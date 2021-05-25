@@ -34,8 +34,50 @@ def check_name(user_name):
         return True
 
 
-def my_input():
-    return input('Введите эмоджи: \n')
+def check_smile(user_messages):
+    # Оценка первого эмоджи
+    if i == 1 and user_messages[i] == 'Радость':
+        print(f'У тебя отличное настроение, {user_name}!')
+    elif i == 1 and user_messages[i] == 'Грусть':
+        print(f'{user_name}, не грусти!')
+    elif i == 1 and user_messages[i] == 'Раздражение/злость':
+        print(f'{user_name}, пожалуйста, не злись!')
+
+    # Переход к радости
+    elif user_messages[i] == 'Радость' and \
+            user_messages[i - 1] == 'Раздражение/злость':
+        print(f'{user_name}, я рад, что ты больше не злишься!')
+    elif user_messages[i] == 'Радость' and user_messages[
+        i - 1] == 'Грусть':
+        print(f'{user_name}, я рад, что ты больше не грустишь!')
+    elif user_messages[i] == 'Радость' and user_messages[
+        i - 1] == 'Радость':
+        print(f'Кажется, твоё настроение стало еще лучше, {user_name}!')
+
+    # Переход к грусти
+    elif user_messages[i] == 'Грусть' and \
+            user_messages[i - 1] == 'Раздражение/злость':
+        print(f'{user_name}, я рад, что ты больше не злишься, но вижу, '
+              f'что теперь тебе стало грустно!')
+    elif user_messages[i] == 'Грусть' and user_messages[
+        i - 1] == 'Радость':
+        print(f'Ой, {user_name}, кажется, ты загрустил!')
+    elif user_messages[i] == 'Грусть' and user_messages[
+        i - 1] == 'Грусть':
+        print(f'Ты всё еще грустишь, {user_name}!')
+
+    # Переход к злости
+    elif user_messages[i] == 'Раздражение/злость' and \
+            user_messages[i - 1] == 'Раздражение/злость':
+        print(f'{user_name}, кажется, ты все еще злишься!')
+    elif user_messages[i] == 'Раздражение/злость' and \
+            user_messages[i - 1] == 'Радость':
+        print(f'Ой, {user_name}, вижу, ты разозлился!')
+    elif user_messages[i] == 'Раздражение/злость' and \
+            user_messages[i - 1] == 'Грусть':
+        print(
+            f'Я рад, что ты больше не грустишь, {user_name}, но вижу, '
+            f'что теперь ты злишься!')
 
 
 # Начало. Записывается информация о сесиии
@@ -61,13 +103,13 @@ message_time = datetime.utcnow()
 while True:
     # Создаётся второй поток для получения информации от пользователя (в
     # первом потоке одновременно создается таймер, чтобы избежать блокировки
-    # input
-    new_thread = ThreadWithResult(target=my_input)
+    # при ожидании input
+    new_thread = ThreadWithResult(target=input)
     new_thread.start()
 
     while (datetime.utcnow() - message_time).seconds / 60 <= 1 and \
             new_thread.is_alive():
-        time.sleep(3)
+        time.sleep(1)
 
     if not new_thread.is_alive():
         # Вариант, когда пользователь ввел ответ
@@ -81,50 +123,9 @@ while True:
         user_messages[i] = check_answer(user_message)
 
         if user_messages[i]:
-            # Оценка первого эмоджи
-            if i == 1 and user_messages[i] == 'Радость':
-                print(f'У тебя отличное настроение, {user_name}!')
-            elif i == 1 and user_messages[i] == 'Грусть':
-                print(f'{user_name}, не грусти!')
-            elif i == 1 and user_messages[i] == 'Раздражение/злость':
-                print(f'{user_name}, пожалуйста, не злись!')
-
-            # Переход к радости
-            elif user_messages[i] == 'Радость' and \
-                    user_messages[i - 1] == 'Раздражение/злость':
-                print(f'{user_name}, я рад, что ты больше не злишься!')
-            elif user_messages[i] == 'Радость' and user_messages[
-                i - 1] == 'Грусть':
-                print(f'{user_name}, я рад, что ты больше не грустишь!')
-            elif user_messages[i] == 'Радость' and user_messages[
-                i - 1] == 'Радость':
-                print(f'Кажется, твоё настроение стало еще лучше, {user_name}!')
-
-            # Переход к грусти
-            elif user_messages[i] == 'Грусть' and \
-                    user_messages[i - 1] == 'Раздражение/злость':
-                print(f'{user_name}, я рад, что ты больше не злишься, но вижу, '
-                      f'что теперь тебе стало грустно!')
-            elif user_messages[i] == 'Грусть' and user_messages[
-                i - 1] == 'Радость':
-                print(f'Ой, {user_name}, кажется, ты загрустил!')
-            elif user_messages[i] == 'Грусть' and user_messages[
-                i - 1] == 'Грусть':
-                print(f'Ты всё еще грустишь, {user_name}!')
-
-            # Переход к злости
-            elif user_messages[i] == 'Раздражение/злость' and \
-                    user_messages[i - 1] == 'Раздражение/злость':
-                print(f'{user_name}, кажется, ты все еще злишься!')
-            elif user_messages[i] == 'Раздражение/злость' and \
-                    user_messages[i - 1] == 'Радость':
-                print(f'Ой, {user_name}, вижу, ты разозлился!')
-            elif user_messages[i] == 'Раздражение/злость' and \
-                    user_messages[i - 1] == 'Грусть':
-                print(
-                    f'Я рад, что ты больше не грустишь, {user_name}, но вижу, '
-                    f'что теперь ты злишься!')
+            check_smile(user_messages)
         else:
+            # когда пользователь ввёл некорректное сообще
             print("Извини, но я тебя не понимаю :( \nБеседа обнуляется")
             edited_session = session.query(Sessions).filter_by(
                 session_id=session_id).one()
@@ -142,4 +143,3 @@ while True:
         session.close()
         print('Ты слишком долго не отвечаешь, я вынужден закрыть сессию!')
         break
-
